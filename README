@@ -1,0 +1,185 @@
+Text Classification and Model Generalization
+
+##### Overview #####
+This project studies how training data size and text
+feature representations affect classification performance.
+
+Spam Detection: Classify emails as spam or non-spam using the Spambase dataset.
+
+Language Identification: Distinguish English from Dutch using text from the Universal Declaration of Human Rights (UDHR).
+
+The models implemented are:
+
+Perceptron
+
+Logistic Regression
+
+Linear Support Vector Classification (LinearSVC)
+
+The experiments compare training, development, and test accuracy. For language identification, different text feature representations are also evaluated.
+
+
+##### Requirements #####
+
+The code uses Python 3 and the following libraries:
+
+NumPy
+
+pandas
+
+scikit-learn
+
+Matplotlib
+
+Seaborn
+
+Install the dependencies with:
+
+python -m pip install numpy pandas scikit-learn matplotlib seaborn jupyter
+
+
+##### How to Run #####
+
+Install Python and the required libraries.
+
+Download the datasets spambase and universal-declaration
+
+Start Jupyter Notebook from the project directory:
+
+jupyter notebook
+
+Open hw2.ipynb.
+
+Run the cells in order, from top to bottom.
+
+The notebook loads the datasets, prepares the features and labels, trains the three classifiers, and evaluates their accuracy on the training, development, and test sets. It also contains code for plotting accuracy comparisons.
+
+
+##### Models and Settings #####
+
+The notebook defines three functions for training and evaluating the models.
+
+### Perceptron
+
+perceptron(
+    p_tol, p_random_state,
+    X_train, y_train,
+    X_dev, y_dev,
+    X_test, y_test
+)
+
+p_tol: Stopping tolerance. The current Spambase experiment uses None, while the UDHR experiment uses 1e-4.
+
+p_random_state: Random seed. The experiments use 0.
+
+### Logistic Regression
+
+loss_reg(
+    lr_max_iter, lr_random_state,
+    X_train, y_train,
+    X_dev, y_dev,
+    X_test, y_test
+)
+
+lr_max_iter: Maximum number of iterations. The experiments use 5000.
+
+lr_random_state: Random seed. The experiments use 0.
+
+### LinearSVC
+
+svm(
+    svm_random_state, svm_tol, ispipeline,
+    X_train, y_train,
+    X_dev, y_dev,
+    X_test, y_test
+)
+
+svm_random_state: Random seed, set to 0.
+
+svm_tol: Stopping tolerance, set to 1e-5.
+
+ispipeline: Controls whether the classifier is constructed with a StandardScaler pipeline.
+
+To experiment with different settings, change the corresponding arguments in the model function calls. Keep the training, development, and test sets fixed when comparing model configurations.
+
+
+##### Feature Representation Settings #####
+
+### Spambase
+
+The Spambase dataset contains numerical input features and a binary class label. The code uses an 80% training split and divides the remaining 20% equally between development and test sets. The split uses random_state=42.
+
+### UDHR Language Identification
+
+The UDHR task uses text data with separate training, development, and test files for English and Dutch.
+
+The active feature configuration is:
+
+vectorizer = CountVectorizer(
+    analyzer='char',
+    ngram_range=(1, 3)
+)
+
+To experiment with different feature representations, modify the vectorizer configuration.
+
+Character n-grams:
+
+CountVectorizer(analyzer='char', ngram_range=(1, 2))
+CountVectorizer(analyzer='char', ngram_range=(1, 3))
+CountVectorizer(analyzer='char', ngram_range=(2, 3))
+
+The ngram_range parameter specifies the minimum and maximum character sequence lengths.
+
+TF-IDF:
+
+TfidfVectorizer()
+
+To use TF-IDF instead of character counts, replace the active vectorizer with TfidfVectorizer(). Fit the vectorizer on the training text and use that same fitted vectorizer to transform the development and test text.
+
+
+##### Evaluation and Visualization #####
+
+Each model is evaluated using accuracy on three datasets:
+
+Training accuracy: Measures performance on the data used to fit the model.
+
+Development accuracy: Supports comparisons between models and settings.
+
+Test accuracy: Measures performance on held-out data.
+
+The notebook also contains plots comparing the accuracy of the three models on each task and across both datasets.
+
+The final test results should be reported only after selecting the model settings using the development set.
+
+
+##### Results #####
+
+### Spam Detection
+
+The Spambase experiments compare Perceptron, Logistic Regression, and LinearSVC using training, development, and test accuracy.
+
+Logistic Regression achieved a test accuracy of 92.4%, outperforming the other two classifiers in the reported experiment. This suggests that Logistic Regression was effective for distinguishing spam from non-spam emails on this dataset.
+
+### Language Identification
+
+The language identification task distinguishes English from Dutch using character-level n-gram features extracted from the UDHR text data.
+
+With character n-grams ranging from length 1 to 3, the classifiers achieved high accuracy on the training and development sets. Logistic Regression and LinearSVC also achieved 100% test accuracy in the reported experiment.
+
+These results suggest that character-level patterns can be highly informative for distinguishing English from Dutch. However, the perfect test accuracy should be interpreted in the context of the dataset size and difficulty.
+
+### Feature Representation
+
+The language identification experiments compare different character n-gram ranges, including (1, 2), (1, 3), and (2, 3).
+
+Character n-grams capture recurring spelling patterns that help distinguish the two languages. Comparing different n-gram configurations helps evaluate how the length of character sequences affects classification performance.
+
+### Training Data Size
+
+Additional experiments examine how training set size affects classification performance.
+
+As the training set increases, test accuracy generally improves across the three classifiers. The magnitude of improvement differs by model, suggesting that classifiers respond differently to the amount of available training data.
+
+### Summary
+
+Overall, Logistic Regression performed best on the reported Spambase experiment, while Logistic Regression and LinearSVC achieved perfect test accuracy on the reported UDHR experiment. The results demonstrate that model performance depends on both the classification task and the feature representation. Further evaluation on additional data would help determine how well these findings generalize.
